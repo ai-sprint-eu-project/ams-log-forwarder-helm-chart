@@ -1,0 +1,103 @@
+nameOverride: "ai-sprint-monit-forwarder"
+fullnameOverride: "ai-sprint-monit-forwarder"
+kind: "Deployment"
+image:
+  repository: "fluent/fluentd-kubernetes-daemonset"
+  pullPolicy: "IfNotPresent"
+  tag: ""
+imagePullSecrets: []
+serviceAccount:
+  create: false
+  annotations: {}
+  name: null
+rbac:
+  create: false
+podSecurityPolicy:
+  enabled: false
+  annotations: {}
+podSecurityContext: {}
+securityContext: {}
+lifecycle: {}
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+resources: {}
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  customRules: []
+nodeSelector: {}
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+annotations: {}
+labels: {}
+podAnnotations: {}
+podLabels: {}
+minReadySeconds:
+terminationGracePeriodSeconds:
+updateStrategy: {}
+env:
+- name: "FLUENTD_CONF"
+  value: "../../../etc/fluent/fluent.conf"
+envFrom: []
+initContainers: []
+volumes:
+- name: etcfluentd-config
+  configMap:
+    name: fluentd-config
+    defaultMode: 0777
+volumeMounts:
+- name: etcfluentd-config
+  mountPath: /etc/fluent
+persistence:
+  enabled: false
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 10Gi
+service:
+  type: "ClusterIP"
+  annotations: {}
+  ports:
+    - name: "forwarder"
+      protocol: TCP
+      containerPort: 24224
+metrics:
+  serviceMonitor:
+    enabled: false
+    additionalLabels:
+      release: prometheus-operator
+    namespace: ""
+    namespaceSelector: {}
+    metricRelabelings: []
+    relabelings: []
+  prometheusRule:
+    enabled: false
+    additionalLabels: {}
+    namespace: ""
+    rules: []
+dashboards:
+  enabled: "false"
+  namespace: ""
+  labels:
+    grafana_dashboard: '"1"'
+plugins: []
+configMapConfigs:

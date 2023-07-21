@@ -1,0 +1,12 @@
+apiVersion: v2
+name: AI-SPRINT-Monitoring-forwarder
+version: '1.0'
+description: AI-SPRINT Monitoring Subsystem (AMS) log forwarder
+authors:
+  - name: Michał Soczewka
+    email: msoczewka@7bulls.com
+maintainers:
+  - name: Michał Soczewka
+    email: msoczewka@7bulls.com
+dependencies:
+  - name: fluentd
